@@ -5,14 +5,16 @@ using UnityEngine;
 
 public class DestroyEnemy : MonoBehaviour
 {
+    private Collider _collider;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        _collider = other;
+        if (_collider.CompareTag("Enemy"))
         {
-            Destroy(other.gameObject); // Destruir el objeto enemigo
+            Destroy(_collider.gameObject); // Destruir el objeto enemigo
             Destroy(gameObject); // Destruir la bala
         }
-        else if (other.CompareTag("Room") || other.CompareTag("Player"))
+        else if (_collider.CompareTag("Room") || _collider.CompareTag("Player"))
         {
             Destroy(gameObject); // Destruir la bala
         }

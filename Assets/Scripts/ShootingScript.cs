@@ -8,12 +8,10 @@ public class ShootingScript : MonoBehaviour
     public GameObject BulletPrefab; // Prefab de la Bala
     public float BulletSpeed; // Velocidad de Bala
     private bool isShootable;
-    public GameObject AimAnimation;
 
     // Update is called once per frame
     void Update()
     {
-        //bool finishedAnimation = 
         if (Input.GetButton("Aim"))
         {
             isShootable = true;
@@ -24,6 +22,7 @@ public class ShootingScript : MonoBehaviour
 
         if (isShootable)
         {
+
             if (Input.GetButtonDown("Shoot"))
             {
                 //Instanciar el Prefab de la Bala en BulletOrigin
