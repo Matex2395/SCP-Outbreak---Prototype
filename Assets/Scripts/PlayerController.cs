@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _runSpeedMultiplier;
     [SerializeField] private float _backwardsSpeedMultiplier;
     [SerializeField] private float _turnSpeed;
+    [SerializeField] public Animator animator;
     private float _currentSpeed; // Alternar entre caminar y correr
 
     private CharacterController _characterController;
@@ -40,10 +41,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButton("Run") && verticalInput > 0)
         {
             // Correr hacia adelante
+            animator.SetBool("isRunning", true);
             _currentSpeed = _walkSpeed * _runSpeedMultiplier;
         }
         else
         {
+            animator.SetBool("isRunning", false);
             // Validación para verificar si está caminando hacia atrás o hacia adelante
             if (verticalInput < 0)
             {
@@ -51,7 +54,9 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                animator.SetFloat("movement", verticalInput * _currentSpeed);
                 _currentSpeed = _walkSpeed;
+                
             }
         }
 
@@ -67,6 +72,7 @@ public class PlayerController : MonoBehaviour
     {
         var horizontalInput = Input.GetAxisRaw("Horizontal");
         // Rotar al personaje
+        animator.SetFloat("rotation", horizontalInput * _currentSpeed);
         transform.Rotate(0, horizontalInput * _turnSpeed * Time.deltaTime, 0);
     }
 }
