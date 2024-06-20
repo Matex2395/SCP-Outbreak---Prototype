@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -13,6 +16,13 @@ public class PlayerController : MonoBehaviour
     private float _currentSpeed; // Alternar entre caminar y correr
     private bool _isShootable;
 
+    [Header("Examine Objects")]
+    [SerializeField] private TMP_Text _dialogueTextMesh;
+    [SerializeField] private Canvas examineCanvas;
+    private string _dialogueText;
+    private Collider _currentCollider;
+    private bool _isInteractable = false;
+
     private CharacterController _characterController;
 
     private void Awake()
@@ -21,17 +31,6 @@ public class PlayerController : MonoBehaviour
 
         // El jugador empieza caminando
         _currentSpeed = _walkSpeed;
-    }
-
-    private void Start()
-    {
-
-    }
-
-    private void Update()
-    {
-        Rotation();
-        AimingAnim();
     }
 
     // Función para mover al personaje con controles tipo tanque
@@ -89,6 +88,86 @@ public class PlayerController : MonoBehaviour
             _isShootable = false;
             animator.SetBool("isAiming", _isShootable);
             Movement();
+            if (_isInteractable && Input.GetButtonDown("Interact"))
+            {
+                UnityEngine.Debug.Log("Botón Pulsado");
+                PrintDialogueLine(_currentCollider);
+            }
+        }
+    }
+
+    private void Update()
+    {
+        Rotation();
+        AimingAnim();
+    }
+
+    // FUNCIÓN PARA PODER EXAMINAR OBJETOS
+
+
+    public void PrintDialogueLine(Collider other)
+    {
+        if (checkPrintLine(other) != null)
+        {
+            StartCoroutine(CO_PrintDialogueLine(checkPrintLine(other), 0.06f));
+            UnityEngine.Debug.Log("Examinar Ejecutado");
+        }
+        else
+        {
+            UnityEngine.Debug.Log("No hay objetos a examinar");
+            return;
+        }
+    }
+
+    private IEnumerator CO_PrintDialogueLine(string lineToPrint, float charSpeed)
+    {
+        _dialogueTextMesh.SetText(string.Empty);
+        examineCanvas.gameObject.SetActive(true);
+
+        for (int i = 0; i < lineToPrint.Length; i++)
+        {
+            var character = lineToPrint[i];
+            _dialogueTextMesh.SetText(_dialogueTextMesh.text + character);
+            yield return new WaitForSeconds(charSpeed);
+        }
+
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.F));
+        examineCanvas.gameObject.SetActive(false);
+        _dialogueTextMesh.SetText(string.Empty);
+
+        yield return null;
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        _isInteractable = true;
+        _currentCollider = other;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        _isInteractable = false;
+        _currentCollider = null;
+    }
+
+    private string checkPrintLine(Collider other)
+    {            
+
+        switch (other.gameObject.name)
+        {
+            case "Bed":
+                return "It seems like this bed hasn't been used in days.";
+            case "Mirror":
+                return "I can't see my reflection because of the dust it's been collecting...";
+            case "Closet":
+                return "It's locked, I wonder what's in there...";
+            case "DeskLamp":
+                return "There's nothing interesting here.";
+            case "StudyDesk":
+                return "I couldn't study in a place like this. The nature sounds would interrupt me.";
+            default:
+                return null;
         }
     }
 }
