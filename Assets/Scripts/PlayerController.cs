@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour
     private Collider _currentCollider;
     private bool _isInteractable = false;
 
+    [Header("Pause Menu")]
+    [SerializeField] public Canvas pauseCanvas;
+
     private CharacterController _characterController;
 
     private void Awake()
@@ -100,6 +103,7 @@ public class PlayerController : MonoBehaviour
     {
         Rotation();
         AimingAnim();
+        PausingGame();
     }
 
     // FUNCIÓN PARA PODER EXAMINAR OBJETOS
@@ -168,6 +172,15 @@ public class PlayerController : MonoBehaviour
                 return "I couldn't study in a place like this. The nature sounds would interrupt me.";
             default:
                 return null;
+        }
+    }
+
+    private void PausingGame()
+    {
+        if (Input.GetButtonDown("Pause"))
+        {
+            Time.timeScale = 0;
+            pauseCanvas.gameObject.SetActive(true);
         }
     }
 }
