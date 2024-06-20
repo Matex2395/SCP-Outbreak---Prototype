@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _turnSpeed;
     [SerializeField] public Animator animator;
     private float _currentSpeed; // Alternar entre caminar y correr
+    private bool _isShootable;
 
     private CharacterController _characterController;
 
@@ -29,8 +30,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        Movement();
         Rotation();
+        AimingAnim();
     }
 
     // Función para mover al personaje con controles tipo tanque
@@ -74,5 +75,20 @@ public class PlayerController : MonoBehaviour
         // Rotar al personaje
         animator.SetFloat("rotation", horizontalInput * _currentSpeed);
         transform.Rotate(0, horizontalInput * _turnSpeed * Time.deltaTime, 0);
+    }
+
+    public void AimingAnim()
+    {
+        if (Input.GetButton("Aim"))
+        {
+            _isShootable = true;
+            animator.SetBool("isAiming", _isShootable);
+        }
+        else
+        {
+            _isShootable = false;
+            animator.SetBool("isAiming", _isShootable);
+            Movement();
+        }
     }
 }

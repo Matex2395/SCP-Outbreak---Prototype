@@ -32,11 +32,13 @@ public class SimpleShoot : MonoBehaviour
 
     void Update()
     {
-        //If you want a different input, change it here
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Aim"))
         {
-            //Calls animation on the gun that has the relevant animation events that will fire
-            gunAnimator.SetTrigger("Fire");
+            if (Input.GetButtonDown("Shoot"))
+            {
+                //Calls animation on the gun that has the relevant animation events that will fire
+                gunAnimator.SetTrigger("Fire");
+            }
         }
     }
 
